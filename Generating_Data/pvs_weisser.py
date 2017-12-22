@@ -1,6 +1,8 @@
 import os, sys, pythia8, ROOT
 import numpy as np
 pre = '/Users/weisser/MIT_Dropbox/LbVMWeisser_shared/Tracking/Simulated_Velo/fastsim'
+save_pre = '/Users/weisser/MIT_Dropbox/LbVMWeisser_shared/Tracking/Simulated_Velo/LHCbPVFinding_DataSets'
+save_path = save_pre + '/Data_ROOT/'
 cwd = os.getcwd()
 sys.path.insert(0, pre)
 os.chdir(pre)
@@ -53,9 +55,10 @@ material = velo.ModuleMaterial('/Users/weisser/MIT_Dropbox/LbVMWeisser_shared/'
                                'Tracking/Simulated_Velo/fastsim/dat/run3.root')
 
 # Create the output TFile and TTree.
-tfile = ROOT.TFile('pvs_weisser.root', 'RECREATE')
-#tfile = ROOT.TFile('pvs_weisser_easy.root', 'RECREATE')
-#tfile = ROOT.TFile('pvs_weisser_1M.root', 'RECREATE')
+tfile = ROOT.TFile(save_path+'pvs_weisser.root', 'RECREATE')
+#tfile = ROOT.TFile(save_path+'pvs_weisser_test2.root', 'RECREATE')
+#tfile = ROOT.TFile(save_path+'pvs_weisser_easy.root', 'RECREATE')
+#tfile = ROOT.TFile(save_path+'pvs_weisser_1M.root', 'RECREATE')
 ttree = ROOT.TTree('data', '')
 
 # Create the writer handler, add branches, and initialize.
@@ -86,6 +89,7 @@ while iEvt < tEvt:
     if not pythia.next(): continue
     else: iEvt += 1; writer.clear()
     if (iEvt%1000 ==0): print "Event : ", iEvt/1000, "k / ", tEvt/1000, "k"
+    # All distance measurements are in units of mm
     xPv, yPv, zPv = 0, 0, random.Gaus(100, 63) # normal LHCb operation
     #xPv, yPv, zPv = 0, 0, np.random.choice([0, 200], 1, p=[0.5, 0.5])[0]
     writer.var('pvr_x', xPv)
@@ -112,7 +116,11 @@ while iEvt < tEvt:
         writer.var('prt_y',   prt.yProd()) 
         writer.var('prt_z',   prt.zProd()) 
         for xHit, yHit, zHit in hits:
-            xHit_recorded, yHit_recorded, zHit_recorded = random.Gaus(xHit, 0.025), random.Gaus(yHit, 0.025), random.Gaus(zHit, 0.025) 
+            #xHit_recorded, yHit_recorded, zHit_recorded = random.Gaus(xHit, 0.025), random.Gaus(yHit, 0.025), random.Gaus(zHit, 0.025) # _old_smearing
+            xHit_recorded, yHit_recorded, zHit_recorded = np.random.uniform(-0.0275,0.0275)+xHit, np.random.uniform(-0.0275,0.0275)+yHit, zHit # normal
+            #xHit_recorded, yHit_recorded, zHit_recorded = np.random.uniform(-0.0275,0.0275)+xHit, np.random.uniform(-0.0275,0.0275)+yHit, random.Gaus(zHit, 0.025) #test1
+            #xHit_recorded, yHit_recorded, zHit_recorded = random.Gaus(xHit, 0.025), random.Gaus(yHit, 0.025), random.Gaus(zHit, 0.025) #test2 
+
             #writer.var('hit_x', xHit) 
             #writer.var('hit_y', yHit) 
             #writer.var('hit_z', zHit)
