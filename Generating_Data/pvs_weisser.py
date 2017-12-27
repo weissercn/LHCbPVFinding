@@ -90,8 +90,13 @@ while iEvt < tEvt:
     else: iEvt += 1; writer.clear()
     if (iEvt%1000 ==0): print "Event : ", iEvt/1000, "k / ", tEvt/1000, "k"
     # All distance measurements are in units of mm
-    xPv, yPv, zPv = 0, 0, random.Gaus(100, 63) # normal LHCb operation
+    #xPv, yPv, zPv = 0, 0, random.Gaus(100, 63) # normal LHCb operation without pv x and y spread
+    xPv, yPv, zPv = random.Gaus(0, 0.055), random.Gaus(0, 0.055), random.Gaus(100, 63) # normal LHCb operation
     #xPv, yPv, zPv = 0, 0, np.random.choice([0, 200], 1, p=[0.5, 0.5])[0]
+
+    #pvr x and y spead can be found https://arxiv.org/pdf/1410.0149.pdf page 42. z dependent
+    [-1000,-750, -500, -250] # mm  
+
     writer.var('pvr_x', xPv)
     writer.var('pvr_y', yPv) 
     writer.var('pvr_z', zPv) 
